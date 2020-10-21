@@ -18,6 +18,7 @@ export class Contador extends React.Component {
         let e = ev.target;
         this.setState((prev) => {
             const contador = prev.contador + delta;
+            // if(contador < 0) throw new Error('es una demo de Error interno')
             if (this.props.onCambia)
                 this.props.onCambia(contador);
             if (this.props.onClick)
