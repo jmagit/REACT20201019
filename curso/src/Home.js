@@ -1,7 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import logo from './logo.svg';
 import './App.css';
+
+import { Contador } from './contador'
 
 function Saluda(props) {
     return (
@@ -12,6 +13,7 @@ function Saluda(props) {
     );
 }
 class Despide extends React.Component {
+    // eslint-disable-next-line no-useless-constructor
     constructor(props) {
         super(props);
     }
@@ -20,26 +22,21 @@ class Despide extends React.Component {
     }
 }
 
-class Contador extends React.Component {
-    render() {
-        return (
-            <div>
-                <h1>{this.props.init}</h1>
-                <h1>{this.props.delta}</h1>
-            </div>
-        );
-    }
+
+function Confirmar(props) {
+    return (
+        <p>
+            <button onClick={props.onOK} >Si</button>&nbsp;
+            <button onClick={props.onCancel} >No</button>
+        </p>
+    );
 }
-Contador.propTypes = {
-    init: PropTypes.number.isRequired,
-    delta: PropTypes.any,
-    onCambia: PropTypes.func
-};
-Contador.defaultProps = {
-    delta: 5
-  };
-  
 export class Home extends React.Component {
+    constructor(props) {
+        super(props);
+        this.cont = 5;
+        this.state = { cont: 7, valor: 7, boton: '' };
+    }
     render() {
         let nombre = '<b>mundo</b>';
         //const numbers = [1, 2, 3, 4, 5];
@@ -51,7 +48,11 @@ export class Home extends React.Component {
                     <img src={logo} className="App-logo" alt="logo" />
                 </header>
                 <main>
-                    <Contador init={10} />
+                    <Contador init={this.state.cont} onCambia={valor => this.setState({ valor })} onClick={valor => this.setState({ boton: valor })} />
+                    <p><button onClick={(ev) => this.setState(prev => ({ cont: prev.cont + 1 }))} >Cambia</button>
+                    Valor actual es {this.state.valor} {this.state.boton}
+                    </p>
+                    <Confirmar onOK={(ev) => alert('Dice que OK')}  onCancel={(ev) => alert('Cancela')}/>
                     <p>Hola <span dangerouslySetInnerHTML={{ __html: nombre }} /></p>
                     <Saluda />
                     {listItems.map((item, index) =>
