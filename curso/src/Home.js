@@ -59,7 +59,7 @@ export class Home extends React.Component {
     constructor(props) {
         super(props);
         this.cont = 5;
-        this.state = { cont: 7, valor: 7, boton: '' };
+        this.state = { cont: 7, valor: 7, boton: '', ver: true };
     }
     render() {
         let nombre = '<b>mundo</b>';
@@ -68,26 +68,24 @@ export class Home extends React.Component {
 
         return (
             <div className="App">
-                <header className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
-                </header>
-                <main>
-                    <ErrorBoundary>
-                    <Contador init={this.state.cont} onCambia={valor => this.setState({ valor })} onClick={valor => this.setState({ boton: valor })} />
+                <ErrorBoundary>
+                    {this.state.ver &&
+                        <Contador init={this.state.cont} onCambia={valor => this.setState({ valor })} onClick={valor => this.setState({ boton: valor })} />
+                    }
                     <p><button onClick={(ev) => this.setState(prev => ({ cont: prev.cont + 1 }))} >Cambia</button>
+                        <button onClick={(ev) => this.setState(prev => ({ ver: !prev.ver }))} >Ver</button>
                     Valor actual es {this.state.valor} {this.state.boton}
                     </p>
-                    </ErrorBoundary>
-                    <Confirmar onOK={(ev) => alert('Dice que OK')}  onCancel={(ev) => alert('Cancela')}/>
-                    <p>Hola <span dangerouslySetInnerHTML={{ __html: nombre }} /></p>
-                    <Saluda />
-                    {listItems.map((item, index) =>
-                        <Saluda key={index} name={item.nombre}>
-                            <h2>Dice:</h2>
-                            <p>{item.texto}</p>
-                        </Saluda>)}
-                    {listItems.map((item, index) => <Despide key={index} name={item.nombre} />)}
-                </main>
+                </ErrorBoundary>
+                <Confirmar onOK={(ev) => alert('Dice que OK')} onCancel={(ev) => alert('Cancela')} />
+                <p>Hola <span dangerouslySetInnerHTML={{ __html: nombre }} /></p>
+                <Saluda />
+                {listItems.map((item, index) =>
+                    <Saluda key={index} name={item.nombre}>
+                        <h2>Dice:</h2>
+                        <p>{item.texto}</p>
+                    </Saluda>)}
+                {listItems.map((item, index) => <Despide key={index} name={item.nombre} />)}
             </div>
 
         );

@@ -13,6 +13,7 @@ export class Contador extends React.Component {
             ev.preventDefault();
         }
         this.traza('constructor', props);
+        this.btnBaja = React.createRef();
     }
 
     cambia(delta, ev) {
@@ -60,7 +61,7 @@ export class Contador extends React.Component {
                 <h1>{this.state.contador}</h1>
                 <p>
                     <button onClick={this.sube} >Sube</button>&nbsp;
-                    <button onClick={this.baja} >Baja</button>
+                    <button ref={this.btnBaja} onClick={this.baja} >Baja</button>
                 </p>
             </div>
         );
@@ -68,10 +69,12 @@ export class Contador extends React.Component {
 
     componentDidMount() {
         this.traza('componentDidMount');
+        this.btnBaja.current.focus();
     }
 
     componentDidUpdate(next_props, next_state) {
         this.traza('componentDidUpdate', next_props, next_state);
+        this.btnBaja.current.focus();
     }
 
     componentWillUnmount() {
