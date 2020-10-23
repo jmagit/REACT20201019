@@ -20,6 +20,7 @@ export class Contador extends React.Component {
         let e = ev.target;
         this.setState((prev) => {
             const contador = prev.contador + delta;
+            if (this.props.min > contador || contador > this.props.max) return {};
             // if(contador < 0) throw new Error('es una demo de Error interno')
             if (this.props.onCambia)
                 this.props.onCambia(contador);
@@ -35,25 +36,25 @@ export class Contador extends React.Component {
     }
 
     traza(metodo, props, state) {
-        console.info(`--- CONTADOR --> ${metodo}`, props, state);        
+        // console.info(`--- CONTADOR --> ${metodo}`, props, state);        
     }
 
-    componentWillMount() {
-        this.traza('componentWillMount');
-    }
+    // componentWillMount() {
+    //     this.traza('componentWillMount');
+    // }
 
-    componentWillReceiveProps(next_props) {
-        this.traza('componentWillReceiveProps', next_props);
-    }
+    // componentWillReceiveProps(next_props) {
+    //     this.traza('componentWillReceiveProps', next_props);
+    // }
 
     shouldComponentUpdate(next_props, next_state) {
         this.traza('shouldComponentUpdate', next_props, next_state);
         return true;
     }
 
-    componentWillUpdate(next_props, next_state) {
-        this.traza('componentWillUpdate', next_props, next_state);
-    }
+    // componentWillUpdate(next_props, next_state) {
+    //     this.traza('componentWillUpdate', next_props, next_state);
+    // }
 
     render() {
         return (
@@ -84,9 +85,13 @@ export class Contador extends React.Component {
 Contador.propTypes = {
     init: PropTypes.number.isRequired,
     delta: PropTypes.any,
+    min: PropTypes.number,
+    max: PropTypes.number,
     onCambia: PropTypes.func
 };
 Contador.defaultProps = {
-    delta: 1
+    delta: 1,
+    min: Number.MIN_SAFE_INTEGER,
+    max: Number.MAX_SAFE_INTEGER
 };
 
