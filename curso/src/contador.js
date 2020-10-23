@@ -12,6 +12,7 @@ export class Contador extends React.Component {
             this.cambia(-this.props.delta, ev);
             ev.preventDefault();
         }
+        this.traza('constructor', props);
     }
 
     cambia(delta, ev) {
@@ -31,6 +32,28 @@ export class Contador extends React.Component {
         this.cambia(+this.props.delta, ev);
         ev.preventDefault();
     }
+
+    traza(metodo, props, state) {
+        console.info(`--- CONTADOR --> ${metodo}`, props, state);        
+    }
+
+    componentWillMount() {
+        this.traza('componentWillMount');
+    }
+
+    componentWillReceiveProps(next_props) {
+        this.traza('componentWillReceiveProps', next_props);
+    }
+
+    shouldComponentUpdate(next_props, next_state) {
+        this.traza('shouldComponentUpdate', next_props, next_state);
+        return true;
+    }
+
+    componentWillUpdate(next_props, next_state) {
+        this.traza('componentWillUpdate', next_props, next_state);
+    }
+
     render() {
         return (
             <div>
@@ -41,6 +64,18 @@ export class Contador extends React.Component {
                 </p>
             </div>
         );
+    }
+
+    componentDidMount() {
+        this.traza('componentDidMount');
+    }
+
+    componentDidUpdate(next_props, next_state) {
+        this.traza('componentDidUpdate', next_props, next_state);
+    }
+
+    componentWillUnmount() {
+        this.traza('componentWillUnmount');
     }
 }
 Contador.propTypes = {
