@@ -46,7 +46,16 @@ class FotoButton extends Component {
 export default class FotoMuro extends Component {
   constructor(props) {
     super(props);
-    this.state = { listado: null, dim: 128, pagina: 0 };
+    this.state = {
+      listado: null, elemento: {
+        "id": "",
+        "author": "",
+        "width": "",
+        "height": "",
+        "url": "",
+        "download_url": ""
+      }, dim: 128, pagina: 0, cargando: true
+    };
   }
   cambia(f, c) {
     this.setState(prev => {
@@ -67,7 +76,7 @@ export default class FotoMuro extends Component {
   cargaRemota(page = 0) {
     const lst = [];
     let nextColumna = 11;
-    this.setState({ listado: null, pagina: page });
+    this.setState({ listado: null, pagina: page, cargando: true });
 
     fetch(`https://picsum.photos/v2/list?page=${page}&limit=100`)
       .then(response => {
@@ -81,7 +90,17 @@ export default class FotoMuro extends Component {
               }
               lst[lst.length - 1][nextColumna++] = item;
             }
-            this.setState({ listado: lst });
+            this.setState({ listado: lst, cargando: false });
+          });
+      });
+  }
+  cargaUno(id) {
+    this.setState({ cargando: true });
+    fetch(`https://picsum.photos/id/${id}/info`)
+      .then(response => {
+        if (response.ok)
+          response.json().then(data => {
+            this.setState({ elemento: data, cargando: false });
           });
       });
   }
@@ -110,6 +129,7 @@ export default class FotoMuro extends Component {
                   onSelecciona={this.anula.bind(this, index, subindex)} >
                   Tamaño: {celda.height} x {celda.width}<br />
                     Descarga: <a href={celda.download_url} target="_blank" rel="noopener noreferrer">{celda.download_url}</a>
+                  <button className="btn btn-link" onClick={ev => this.cargaUno(celda.id)} >Editar</button>
                 </FotoCard>
               ) : (
                   <FotoButton tamaño={tamaño}
@@ -138,7 +158,7 @@ export default class FotoMuro extends Component {
             <PaginationLink last onClick={ev => this.cargaRemota(10)} />
           </PaginationItem>
         </Pagination>
-        <FotoForm />
+        <FotoForm elemento={this.state.elemento} />
         <div className="container-fluid">{rslt}</div>
       </div>
     );
@@ -230,19 +250,19 @@ class FotoForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      elemento: {
-        "id": "5",
-        "author": "Alejandro Escamilla",
-        "width": 5245,
-        "height": 3497,
-        "url": "https://unsplash.com/photos/LF8gK8-HGSg",
-        "download_url": "https://picsum.photos/id/5/5245/3497"
-      }, msgErr: {}, invalid: false
+      elemento: props.elemento, msgErr: {}, invalid: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.enviar = this.enviar.bind(this);
     this.form = React.createRef();
     this.debeValidar = false;
+  }
+
+  shouldComponentUpdate(next_props, next_state) {
+    if (this.props.elemento.id != next_props.elemento.id) {
+      next_state.elemento = next_props.elemento;
+    }
+    return true;
   }
 
   checkCustomValidity(campo, valor) {
@@ -325,6 +345,18 @@ class FotoForm extends React.Component {
           <input type="number" className="form-control" id="height" name="height"
             value={this.state.elemento.height} onChange={this.handleChange} />
           <div className="invalid-feedback">{this.state.msgErr.height}</div>
+        </div>
+        <div className="form-group">
+          <label htmlFor="url">Página</label>
+          <input type="url" className="form-control" id="url" name="url"
+            value={this.state.elemento.url} onChange={this.handleChange} />
+          <div className="invalid-feedback">{this.state.msgErr.url}</div>
+        </div>
+        <div className="form-group">
+          <label htmlFor="download_url">Foto</label>
+          <input type="url" className="form-control" id="download_url" name="download_url"
+            value={this.state.elemento.download_url} onChange={this.handleChange} />
+          <div className="invalid-feedback">{this.state.msgErr.download_url}</div>
         </div>
         <button type="submit" className="btn btn-primary" disabled={this.state.invalid} >Submit</button>
         <button type="button" className="btn btn-primary" disabled={this.state.invalid} onClick={this.enviar}>Enviar</button>
